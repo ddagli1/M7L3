@@ -1,5 +1,5 @@
 from speech import speech_en
-from random import choice, randint
+from random import choice
 import time
 
 # Zorluk seviyeleri
