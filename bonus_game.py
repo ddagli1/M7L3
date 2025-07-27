@@ -1,53 +1,39 @@
-import speech_recognition as sr
-import random
+from speech import speech_en
+from random import choice, randint
 import time
 
-def speech():
-    recog=sr.Recognizer()
-    mic=sr.Microphone()
+# Zorluk seviyeleri
+seviyeler = {
+    "kolay": ["dairy", "mouse", "computer"],
+    "orta": ["programming", "algorithm", "developer"],
+    "zor": ["neural network", "machine learning", "artificial intelligence"]
+}
 
-
-    with mic as audio_file:
-        recog.adjust_for_ambient_noise(audio_file)
-        print("sAy something:")
-        audio=recog.listen(audio_file)
-
-
-
-    try:
-        return recog.recognize_google(audio, language="en-US")
-    except sr.UnknownValueError:
-        return "Sorry, I did not understand that."
-    except sr.RequestError :
-        return "Sorry, there was an error with the speech recognition service."
-    
-
-def play_game():
-    levels = {
-        "kolay": ["diary", "computer"],
-        "orta": ["programming", "algorithm", "developer"],
-        "zor": ["neural network", "machine learning", "artificial intelligence"]
-    }
-
-    print("zorluk seviyesini sec: kolay, orta, zor")    
-    level=input("seviye: ").lower()
-
-    if level not in levels:
-        print("gecersiz seviye. lütfen tekrar deneyin.")
+def play_game(level):
+    words = seviyeler.get(level, [])  # Zorluğa göre kelime seçimi
+    if not words:
+        print("Hatalı zorluk seviyesi.")
         return
-    
-    word= random.choice(levels[level])
-    print(f"kelimeyi tahmin et:{word} ")
-    time.sleep(2)
 
-    spoken_word = speech()
-    print(f"tahmin ettigin kelime: {spoken_word}")
+    score = 0
+    num_attempts = 3  # Kelime başı deneme sayısı
 
-    if spoken_word.lower() == word:
-        print("tebrikler! dogru tahmin ettiniz.")
-    else:
-        print(f"yanlis tahmin. dogru kelime: {word}")
+    for _ in range(len(words)):
+        random_word = choice(words)
+        print(f"Lütfen kelimeyi telaffuz edin: {random_word}")
+        recog_word = speech()
+        print(recog_word)
+        
+        if random_word == recog_word:
+            print("Doğru!")
+            score += 1
+        else:
+            print(f"Bir yanlışlık var. Kelime: {random_word}")
 
+        time.sleep(2)  # Kelimeler arası bekleme
+        
+    print(f"Oyun bitti! Skorunuz: {score}/{len(words)}")
 
-if __name__ == "__main__":
-    play_game()
+# Zorluk seviyesini seçme
+selected_level = input("Zorluk seviyesini seçin (kolay/orta/zor): ").lower()
+play_game(selected_level)
